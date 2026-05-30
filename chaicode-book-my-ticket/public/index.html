@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Charlie Cinema - Premium Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind config for custom colors and enabling dark mode via class
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 500: '#3b82f6', 600: '#2563eb' } // Beautiful Blue
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50 min-h-screen flex flex-col">
+
+    <nav
+        class="sticky top-0 z-50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-clapperboard text-brand-600 dark:text-brand-500 text-2xl"></i>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">Charlie <span
+                        class="text-brand-600 dark:text-brand-500">Cinema</span></h1>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDarkMode()"
+                    class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    title="Toggle Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon text-slate-600 dark:text-yellow-400 text-lg"></i>
+                </button>
+
+                <button id="logout-btn" onclick="handleLogout()"
+                    class="hidden px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors shadow-md">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <div class="lg:col-span-4 flex flex-col gap-6">
+
+            <div id="auth-section"
+                class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-100 dark:border-slate-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-brand-500"></i> Secure Login
+                </h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Login required to secure your booking.</p>
+                <div class="space-y-3">
+                    <input type="email" id="email" placeholder="Email Address"
+                        class="w-full px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <input type="password" id="password" placeholder="Password"
+                        class="w-full px-4 py-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white">
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="handleLogin()"
+                            class="flex-1 bg-brand-600 hover:bg-brand-500 text-white py-2 rounded-lg font-semibold transition-colors shadow-md">Login</button>
+                        <button onclick="handleRegister()"
+                            class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-white py-2 rounded-lg font-semibold transition-colors shadow-md">Register</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-section"
+                class="hidden bg-gradient-to-br from-brand-600 to-indigo-700 rounded-2xl p-6 shadow-xl text-white">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl backdrop-blur-sm border border-white/30">
+                        <i class="fa-solid fa-user-astronaut"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">Welcome, VIP!</h2>
+                        <p class="text-blue-100 text-sm"><i class="fa-solid fa-ticket mr-1"></i> Ready to book</p>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-100 dark:border-slate-700">
+                <div class="h-32 bg-slate-800 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Movie Cover" class="w-full h-full object-cover opacity-50">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <span class="px-2 py-1 bg-red-600 text-xs font-bold rounded-md mb-2 inline-block">ACTION
+                            THRILLER</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-2">Dhurandhar The Revenge</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-3">
+                        Experience an epic tale of revenge and redemption at Charlie Cinema. Book your seats now and
+                        enjoy the spectacular action-packed thriller!
+                    </p>
+                    <div
+                        class="flex items-center gap-4 text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                        <div class="flex items-center gap-2"><i class="fa-regular fa-clock text-brand-500"></i> Evening:
+                            6:00 PM</div>
+                        <div class="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+                        <div class="flex items-center gap-2"><i class="fa-regular fa-moon text-brand-500"></i> Night:
+                            9:00 PM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            <div
+                class="bg-white dark:bg-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-100 dark:border-slate-700 flex-grow flex flex-col">
+
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                    <h2 class="text-2xl font-bold">Select Your Seats</h2>
+
+                    <div
+                        class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-600 text-sm font-medium">
+                        <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 rounded-md bg-emerald-500 shadow-sm border border-emerald-600"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-4 h-4 rounded-md bg-slate-200 dark:bg-slate-700 border border-slate-300 dark:border-slate-600">
+                            </div>
+                            <span class="text-slate-500 dark:text-slate-400">Booked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="flex-grow flex items-center justify-center bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 sm:p-8 border border-slate-200 dark:border-slate-700/50 overflow-x-auto">
+                    <div id="seat-grid"
+                        class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 gap-3 sm:gap-4 lg:gap-5 mx-auto">
+                    </div>
+                </div>
+
+                <div class="mt-10 mb-2 w-full max-w-2xl mx-auto">
+                    <div
+                        class="h-2 bg-gradient-to-r from-transparent via-brand-400 to-transparent rounded-full opacity-50">
+                    </div>
+                    <div
+                        class="text-center text-xs text-slate-500 dark:text-slate-400 mt-2 tracking-widest uppercase font-semibold">
+                        Eyes Here - Cinema Screen</div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- 1. DARK MODE LOGIC ---
+        function toggleDarkMode() {
+            const htmlClass = document.documentElement.classList;
+            const themeIcon = document.getElementById('theme-icon');
+
+            if (htmlClass.contains('dark')) {
+                htmlClass.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                themeIcon.classList.replace('text-yellow-400', 'text-slate-600');
+            } else {
+                htmlClass.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                themeIcon.classList.replace('text-slate-600', 'text-yellow-400');
+            }
+        }
+
+        // Initialize Theme from localStorage
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            const themeIcon = document.getElementById('theme-icon');
+            if (themeIcon) {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                themeIcon.classList.replace('text-slate-600', 'text-yellow-400');
+            }
+        }
+
+        // --- 2. AUTHENTICATION LOGIC ---
+        function checkLoginState() {
+            const token = localStorage.getItem("token");
+            if (token) {
+                document.getElementById("auth-section").classList.add("hidden");
+                document.getElementById("user-section").classList.remove("hidden");
+                document.getElementById("logout-btn").classList.remove("hidden");
+            } else {
+                document.getElementById("auth-section").classList.remove("hidden");
+                document.getElementById("user-section").classList.add("hidden");
+                document.getElementById("logout-btn").classList.add("hidden");
+            }
+        }
+
+        async function handleRegister() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            if (!email || !password) return alert("Email and Password required!");
+
+            try {
+                const res = await fetch("/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) alert("Registered successfully! Now please click Login.");
+                else alert("Error: " + data.error);
+            } catch (err) {
+                console.error("Registration failed:", err);
+                alert("Server error during registration. Check console.");
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            if (!email || !password) return alert("Email and Password required!");
+
+            try {
+                const res = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem("token", data.token);
+                    checkLoginState();
+                    // Show a nice temporary success message instead of blocky alert if possible, 
+                    // but keeping alert for simplicity here
+                    alert("Login Successful! You can now book tickets.");
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                console.error("Login failed:", err);
+                alert("Server error during login. Check console.");
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("token");
+            checkLoginState();
+        }
+
+        // --- 3. SEAT BOOKING LOGIC ---
+        async function loadSeats() {
+            const gridContainer = document.getElementById("seat-grid");
+
+            try {
+                const res = await fetch("/seats");
+                if (!res.ok) throw new Error("Failed to fetch seats from server");
+
+                const resarray = await res.json();
+                const seats = resarray.sort((a, b) => a.id - b.id);
+
+                // Clear loading state
+                gridContainer.innerHTML = '';
+
+                seats.forEach(seat => {
+                    const seatDiv = document.createElement("div");
+
+                    // Base styles for all seats (Using Flexbox for centering)
+                    const baseStyles = "w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 flex items-center justify-center rounded-xl text-lg font-bold transition-all duration-300 relative group select-none";
+
+                    if (seat.isbooked) {
+                        // Booked Seat Styles
+                        seatDiv.className = `${baseStyles} bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 border-2 border-slate-300 dark:border-slate-600 cursor-not-allowed`;
+                        seatDiv.innerHTML = `
+                            <span class="relative z-10 line-through decoration-2 opacity-60">${seat.id}</span>
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-slate-800 text-xs text-white rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 pointer-events-none shadow-lg">
+                                Booked by ${seat.name || 'VIP'}
+                            </div>
+                        `;
+                    } else {
+                        // Available Seat Styles
+                        seatDiv.className = `${baseStyles} bg-emerald-50 text-emerald-600 border-2 border-emerald-500 shadow-sm shadow-emerald-500/20 cursor-pointer hover:bg-emerald-500 hover:text-white hover:-translate-y-1 hover:shadow-md hover:shadow-emerald-500/40 active:scale-95 dark:bg-emerald-900/20 dark:text-emerald-400`;
+                        seatDiv.innerHTML = `<span class="relative z-10">${seat.id}</span>`;
+
+                        // Add Click Event for Booking
+                        seatDiv.addEventListener("click", () => handleBooking(seat.id));
+                    }
+
+                    gridContainer.appendChild(seatDiv);
+                });
+            } catch (ex) {
+                console.error("Error loading seats:", ex);
+                gridContainer.innerHTML = `<div class="col-span-full text-red-500 text-center font-medium p-4 border border-red-200 bg-red-50 rounded-lg dark:bg-red-900/20 dark:border-red-800">Error loading seats. Is the backend server running?</div>`;
+            }
+        }
+
+        async function handleBooking(seatId) {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("Security Alert: Please login first to book a seat!");
+                // Scroll up to auth section smoothly
+                document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            const name = prompt("Enter the name for the ticket:");
+            if (!name) return;
+
+            try {
+                const res = await fetch(`/${seatId}/${name}`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert("Ticket Confirmed! Enjoy the movie.");
+                    loadSeats(); // Reload seats to show new red seat without refreshing page
+                } else {
+                    alert("Booking Failed: " + data.error);
+                }
+            } catch (ex) {
+                console.error("Booking error:", ex);
+                alert("Error connecting to server. Please try again.");
+            }
+        }
+
+        // --- INITIALIZATION ---
+        checkLoginState();
+        loadSeats();
+    </script>
+</body>
+
+</html>

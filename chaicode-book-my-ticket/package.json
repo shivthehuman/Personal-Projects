@@ -1,0 +1,30 @@
+{
+  "name": "chai-book-ticket-hackathon",
+  "version": "1.0.0",
+  "description": "- **The Duplicate Booking Bug:** Initially, my booking API was failing when two requests hit at the exact same millisecond. Revising the SQL class notes on Transactions and `FOR UPDATE` row-level locks helped me fix this race condition!\r - **Token Management:** It took me some time to figure out how to pass the JWT from `localStorage` into the `fetch` API headers in `index.html`. \r - **Responsive UI:** The original table was overflowing on my mobile screen, so I added horizontal scrolling and Tailwind breakpoints (`md:w-32`) to fix it.",
+  "keywords": [],
+  "homepage": "https://github.com/shivthehuman/chaicode-book-my-ticket#readme",
+  "bugs": {
+    "url": "https://github.com/shivthehuman/chaicode-book-my-ticket/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shivthehuman/chaicode-book-my-ticket.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {}
+}
