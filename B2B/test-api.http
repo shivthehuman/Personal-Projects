@@ -1,0 +1,52 @@
+### B2B API smoke tests (VS Code REST Client extension)
+### Prereqs: API running (`npm run dev -w @b2b/api`) + Mongo + root `.env` configured
+
+@baseUrl = http://localhost:3001
+
+### Health
+GET {{baseUrl}}/health
+
+###############################################################################
+### 1) Register (creates User + Organization with GeoJSON Point `[lng, lat]`)
+###############################################################################
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "buyer@test.com",
+  "password": "StrongPass01StrongPass01",
+  "role": "buyer",
+  "organization": {
+    "legalName": "Test Buyers LLC",
+    "type": "buyer",
+    "location": {
+      "type": "Point",
+      "coordinates": [75.8577, 22.7196]
+    }
+  }
+}
+
+###############################################################################
+### 2) Login
+###############################################################################
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "buyer@test.com",
+  "password": "StrongPass01StrongPass01"
+}
+
+###############################################################################
+### 3) Current profile (Bearer access token)
+###############################################################################
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{login.response.body.accessToken}}
+
+###############################################################################
+### Notes
+### - `POST /auth/refresh` and `POST /auth/logout` rely on httpOnly cookies (`Path=/auth`).
+###   Most REST `.http` clients won’t mimic a browser cookie jar; use curl (see README) or the SPA.
+###############################################################################
